@@ -1,0 +1,49 @@
+================================================================================
+  TerrorPay — deploy na Discloud (https://discloud.com)
+================================================================================
+
+1) ARQUIVO discloud.config (na raiz)
+   - O padrao deste repositorio usa TYPE=site para expor HTTP (webhook MisticPay + API).
+   - Plano Platinum (ou superior) + subdominio criado no painel Discloud sao obrigatorios para TYPE=site.
+   - Altere ID=terrorpay para o subdominio que voce criou.
+   - Use somente o nome, sem ".discloud.app".
+   - Ex.: ID=meubot → URL publica https://meubot.discloud.app.
+   - O bot le esse ID automaticamente e usa como BASE_URL quando BASE_URL nao estiver no ambiente.
+
+2) PORTA HTTP
+   - Na Discloud, apps TYPE=site devem escutar na porta 8080.
+   - Configure no painel da aplicacao: variavel de ambiente PORT=8080 (a plataforma costuma injetar; se nao, defina manualmente).
+
+3) VARIAVEIS DE AMBIENTE (painel Discloud → Environment)
+   Copie de .env.example e preencha:
+   - BOT_TOKEN
+   - BASE_URL opcional: se ficar vazio, o bot usa https://ID_DO_DISCLOUD_CONFIG.discloud.app
+   - ADMIN_IDS
+   - MISTICPAY_CLIENT_ID, MISTICPAY_CLIENT_SECRET, MISTICPAY_BASE_URL
+   - MISTICPAY_WEBHOOK_TOKEN (recomendado)
+   - DEFAULT_FEE_PERCENT (opcional)
+   - PORT=8080
+   - DATABASE_PATH=./data/terrorpay.db
+
+   Importante:
+   - Nao envie .env dentro do zip se voce for compartilhar o arquivo com outra pessoa.
+   - Para o Mini App funcionar dentro do Telegram, BASE_URL precisa ser HTTPS publico.
+
+4) WEBHOOK MISTICPAY
+   - projectWebhook usa BASE_URL + /webhooks/misticpay.
+   - Se BASE_URL estiver vazio, BASE_URL vem automaticamente do ID em discloud.config.
+   - A URL publica precisa ser acessivel na internet (por isso TYPE=site + subdominio).
+
+5) PLANO GRATIS (somente bot, sem site publico)
+   - Renomeie discloud.config para discloud.config.site (backup).
+   - Renomeie discloud.config.bot.example para discloud.config (TYPE=bot).
+   - Webhooks externos da MisticPay nao chegarao sem URL publica; use upgrade ou tunel (ngrok) para BASE_URL em testes.
+
+6) ZIP PARA UPLOAD
+   - Use .discloudignore para nao enviar node_modules e .env.
+   - A Discloud executa npm install e BUILD=npm run build no deploy.
+
+7) BUILD LOCAL
+   - npm run build → saida em pasta build/ (nao use dist/ para build local no zip; a Discloud reserva dist em alguns fluxos).
+
+================================================================================
