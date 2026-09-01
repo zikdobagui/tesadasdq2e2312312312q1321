@@ -206,32 +206,7 @@ function miniAppHtml() {
       margin: 0 auto;
       padding: calc(12px + env(safe-area-inset-top)) 12px calc(24px + env(safe-area-inset-bottom));
     }
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-      margin-bottom: 10px;
-      padding: 2px 2px 0;
-    }
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      min-width: 0;
-      animation: fadeUp .42s ease both;
-    }
-    .mark {
-      width: 42px;
-      height: 42px;
-      border-radius: 999px;
-      display: grid;
-      place-items: center;
-      background: linear-gradient(145deg, #f7fff9, #dff4e7);
-      color: #168151;
-      font-weight: 900;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, .18);
-    }
+    .topbar { display: none; }
     h1, h2, p { margin: 0; }
     h1 { font-size: 20px; line-height: 1.1; letter-spacing: 0; }
     h2 { letter-spacing: 0; }
@@ -245,13 +220,6 @@ function miniAppHtml() {
       font-size: 12px;
       white-space: nowrap;
       background: rgba(255, 255, 255, .07);
-    }
-    .eyebrow {
-      color: var(--accent-2);
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: .08em;
-      text-transform: uppercase;
     }
     .status-dot {
       display: inline-block;
@@ -408,6 +376,7 @@ function miniAppHtml() {
       gap: 10px;
       margin-top: 12px;
     }
+    .profile-main { min-width: 0; }
     .avatar {
       width: 46px;
       height: 46px;
@@ -429,6 +398,16 @@ function miniAppHtml() {
     }
     .profile-card strong { display: block; font-size: 14px; }
     .profile-card span { color: rgba(255,255,255,.72); font-size: 12px; }
+    .profile-id {
+      margin-left: auto;
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 999px;
+      padding: 7px 10px;
+      color: rgba(255,255,255,.86);
+      font-size: 12px;
+      white-space: nowrap;
+      background: rgba(255,255,255,.06);
+    }
     .panel-head {
       min-height: 46px;
       display: flex;
@@ -586,10 +565,10 @@ function miniAppHtml() {
       .metric strong { font-size: 14px; }
     }
     @media (max-width: 430px) {
-      .topbar { align-items: flex-start; }
-      .topbar > .pill { display: none; }
       .hero-grid { grid-template-columns: 1fr; }
       .quick { grid-template-columns: 1fr; }
+      .profile-card { align-items: flex-start; }
+      .profile-id { font-size: 11px; padding: 6px 8px; }
     }
   </style>
 </head>
@@ -679,10 +658,6 @@ function miniAppHtml() {
 
       root.className = "";
       root.innerHTML =
-        '<div class="topbar">' +
-          '<div class="brand"><div class="mark">TP</div><div><p class="eyebrow">Digital banking</p><h1>TerrorPay</h1><p class="subtitle">Conta PIX no Telegram</p></div></div>' +
-          '<div class="pill"><span class="status-dot"></span>ID ' + escapeHtml(data.user.telegramId) + '</div>' +
-        '</div>' +
         '<section class="dashboard">' +
           '<div class="hero">' +
             '<div class="hero-top">' +
@@ -691,7 +666,8 @@ function miniAppHtml() {
             '</div>' +
             '<div class="profile-card">' +
               avatar +
-              '<div><strong>' + escapeHtml(profileName) + '</strong><span>' + escapeHtml(profileHandle) + '</span></div>' +
+              '<div class="profile-main"><strong>' + escapeHtml(profileName) + '</strong><span>' + escapeHtml(profileHandle) + '</span></div>' +
+              '<div class="profile-id">ID ' + escapeHtml(data.user.telegramId) + '</div>' +
             '</div>' +
             '<div class="hero-grid">' +
               '<div class="metric"><span class="muted">Taxa</span><strong>' + escapeHtml(data.summary.feeDisplay) + '</strong></div>' +
