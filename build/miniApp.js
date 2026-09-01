@@ -151,19 +151,20 @@ function miniAppHtml() {
   <style>
     :root {
       color-scheme: dark;
-      --bg: #0c1110;
-      --panel: #121817;
-      --panel-2: #1a2220;
-      --panel-3: #edf8f1;
-      --text: #f8fffb;
-      --ink: #07110d;
-      --muted: #91a49b;
-      --line: rgba(231, 255, 243, .10);
-      --line-strong: rgba(231, 255, 243, .18);
-      --accent: #21a768;
-      --accent-2: #9ee2bc;
-      --cyan: #72e0c4;
-      --danger: #ff6470;
+      --bg: #080b0d;
+      --panel: #111518;
+      --panel-2: #171d20;
+      --panel-3: #f2f7f3;
+      --text: #f7faf8;
+      --ink: #0a1110;
+      --muted: #9aa6a1;
+      --line: rgba(236, 248, 241, .10);
+      --line-strong: rgba(236, 248, 241, .18);
+      --accent: #35c982;
+      --accent-2: #b8e8cd;
+      --cyan: #78dcca;
+      --gold: #d8b76a;
+      --danger: #f36b75;
       --radius: 8px;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
@@ -171,7 +172,10 @@ function miniAppHtml() {
     body {
       margin: 0;
       min-height: 100vh;
-      background: var(--tg-theme-bg-color, var(--bg));
+      background:
+        linear-gradient(180deg, rgba(53, 201, 130, .10) 0, transparent 260px),
+        radial-gradient(circle at 84% -10%, rgba(184, 232, 205, .13), transparent 290px),
+        var(--tg-theme-bg-color, var(--bg));
       color: var(--tg-theme-text-color, var(--text));
     }
     button, input { font: inherit; }
@@ -200,8 +204,8 @@ function miniAppHtml() {
       border-radius: 999px;
       display: grid;
       place-items: center;
-      background: #f4fff8;
-      color: var(--accent);
+      background: linear-gradient(145deg, #f7fff9, #dff4e7);
+      color: #168151;
       font-weight: 900;
       box-shadow: 0 10px 30px rgba(0, 0, 0, .18);
     }
@@ -220,7 +224,7 @@ function miniAppHtml() {
       background: rgba(255, 255, 255, .07);
     }
     .eyebrow {
-      color: var(--accent);
+      color: var(--accent-2);
       font-size: 11px;
       font-weight: 800;
       letter-spacing: .08em;
@@ -233,16 +237,18 @@ function miniAppHtml() {
       border-radius: 99px;
       margin-right: 7px;
       background: var(--accent);
-      box-shadow: 0 0 14px rgba(40, 225, 138, .9);
+      box-shadow: 0 0 14px rgba(53, 201, 130, .65);
     }
     .hero {
-      border: 0;
-      border-radius: 0 0 26px 26px;
-      background: linear-gradient(160deg, #2bb873 0%, #1f8f5c 58%, #176845 100%);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 24px;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.14), rgba(255,255,255,.03)),
+        linear-gradient(155deg, #20302b 0%, #14221e 44%, #0f1718 100%);
       padding: 18px 16px 18px;
       position: relative;
       overflow: hidden;
-      box-shadow: 0 18px 48px rgba(9, 87, 55, .20);
+      box-shadow: 0 22px 70px rgba(0, 0, 0, .32);
     }
     .hero::after {
       content: "";
@@ -250,7 +256,7 @@ function miniAppHtml() {
       inset: 0;
       pointer-events: none;
       background:
-        radial-gradient(circle at 88% 12%, rgba(255,255,255,.13), transparent 24%),
+        radial-gradient(circle at 88% 12%, rgba(53,201,130,.22), transparent 25%),
         linear-gradient(115deg, transparent 0 58%, rgba(255,255,255,.055) 58% 100%);
       opacity: .9;
     }
@@ -294,8 +300,8 @@ function miniAppHtml() {
       padding: 9px 10px;
     }
     .hero .metric {
-      background: rgba(255,255,255,.105);
-      border-color: rgba(255,255,255,.16);
+      background: rgba(255,255,255,.075);
+      border-color: rgba(255,255,255,.14);
     }
     .metric span {
       color: var(--muted);
@@ -319,9 +325,9 @@ function miniAppHtml() {
     }
     .action {
       min-height: 66px;
-      border: 1px solid rgba(255,255,255,.08);
+      border: 1px solid rgba(236,248,241,.12);
       border-radius: 18px;
-      background: #f7fbf8;
+      background: linear-gradient(180deg, #f8fbf8, #eaf3ed);
       color: var(--ink);
       display: grid;
       grid-template-columns: 34px 1fr;
@@ -330,7 +336,7 @@ function miniAppHtml() {
       gap: 9px;
       padding: 10px;
       cursor: pointer;
-      box-shadow: 0 12px 34px rgba(0, 0, 0, .16);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, .22);
     }
     .action:hover { border-color: rgba(20, 200, 113, .34); }
     .action:active { transform: translateY(1px); }
@@ -340,9 +346,9 @@ function miniAppHtml() {
       border-radius: var(--radius);
       display: grid;
       place-items: center;
-      background: rgba(20, 200, 113, .12);
-      border: 1px solid rgba(20, 200, 113, .22);
-      color: var(--accent);
+      background: rgba(53, 201, 130, .12);
+      border: 1px solid rgba(53, 201, 130, .22);
+      color: #168151;
       font-size: 18px;
       font-weight: 900;
     }
@@ -356,11 +362,11 @@ function miniAppHtml() {
       gap: 10px;
     }
     .panel {
-      border: 1px solid var(--line);
+      border: 1px solid rgba(236,248,241,.11);
       border-radius: 18px;
-      background: rgba(17, 24, 23, .96);
+      background: linear-gradient(180deg, rgba(19, 24, 27, .98), rgba(13, 17, 19, .98));
       overflow: hidden;
-      box-shadow: 0 18px 56px rgba(0, 0, 0, .16);
+      box-shadow: 0 18px 54px rgba(0, 0, 0, .24);
     }
     .panel-head {
       min-height: 46px;
@@ -370,7 +376,7 @@ function miniAppHtml() {
       gap: 12px;
       padding: 11px 12px;
       border-bottom: 1px solid var(--line);
-      background: rgba(255,255,255,.018);
+      background: rgba(255,255,255,.025);
     }
     .panel-head h2 { font-size: 14px; }
     .list { display: grid; }
@@ -396,7 +402,7 @@ function miniAppHtml() {
       margin-top: 3px;
     }
     .amount { font-weight: 800; white-space: nowrap; }
-    .positive { color: var(--accent); }
+    .positive { color: #65dda0; }
     .negative { color: var(--danger); }
     .affiliate-box {
       padding: 12px;
@@ -404,9 +410,9 @@ function miniAppHtml() {
       gap: 8px;
     }
     .link {
-      border: 1px dashed rgba(37, 208, 127, .45);
+      border: 1px dashed rgba(101, 221, 160, .42);
       border-radius: 14px;
-      background: rgba(37, 208, 127, .08);
+      background: rgba(101, 221, 160, .075);
       color: var(--text);
       padding: 9px;
       font-size: 11px;
@@ -416,8 +422,8 @@ function miniAppHtml() {
       min-height: 42px;
       border: 0;
       border-radius: 14px;
-      background: var(--accent);
-      color: #06120c;
+      background: linear-gradient(135deg, #35c982, #a8e8c4);
+      color: #07110d;
       font-weight: 850;
       cursor: pointer;
     }
@@ -456,21 +462,21 @@ function miniAppHtml() {
       min-height: 40px;
       border: 1px solid var(--line);
       border-radius: 14px;
-      background: #0d1113;
+      background: #0b1012;
       color: var(--text);
       padding: 0 12px;
       outline: none;
     }
     .input:focus, .select:focus {
-      border-color: rgba(40, 225, 138, .5);
-      box-shadow: 0 0 0 3px rgba(40, 225, 138, .08);
+      border-color: rgba(53, 201, 130, .48);
+      box-shadow: 0 0 0 3px rgba(53, 201, 130, .08);
     }
     .submit {
       min-height: 40px;
       border: 0;
       border-radius: 14px;
-      background: var(--accent);
-      color: #06120c;
+      background: linear-gradient(135deg, #35c982, #a8e8c4);
+      color: #07110d;
       font-weight: 850;
       cursor: pointer;
     }
