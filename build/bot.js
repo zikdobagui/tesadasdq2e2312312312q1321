@@ -31,50 +31,87 @@ const mainKeyboard = () => new grammy_1.InlineKeyboard()
     .text("⌨️ Comandos", "menu:commands")
     .text("🧑‍💻 Suporte", "menu:support");
 const adminKeyboard = () => new grammy_1.InlineKeyboard()
-    .text("👥 Usuários", "admin:users")
-    .text("🔎 Buscar usuário", "admin:user_lookup")
+    .text("👥 Clientes", "admin:section:users")
+    .text("💰 Financeiro", "admin:section:finance")
     .row()
-    .text("📋 Logs", "admin:logs")
-    .text("⏳ Saques pendentes", "admin:withdraw_approvals")
+    .text("💹 Taxas", "admin:section:fees")
+    .text("🔐 Acesso", "admin:section:access")
     .row()
-    .text("📨 Aviso geral", "admin:broadcast")
+    .text("🪪 Integrações", "admin:section:integrations")
+    .text("🤝 Afiliados", "admin:section:affiliates")
     .row()
-    .text("💰 Saldo gate", "admin:gate_stats")
-    .text("🏆 Ranking", "admin:ranking_balance")
+    .text("📣 Anúncios", "admin:section:announcements")
+    .text("🧾 Sistema", "admin:section:system")
     .row()
-    .text("💹 Taxa global", "admin:global_fee")
-    .text("🎯 Taxa por usuário", "admin:user_fee")
-    .row()
-    .text("🛡️ Limite aprovação", "admin:withdraw_approval_threshold")
-    .text("📄 Termos ON/OFF", "admin:toggle_terms")
-    .row()
-    .text("🪪 Mistic CI", "admin:set_misticpay_client_id")
-    .text("🔐 Mistic CS", "admin:set_misticpay_client_secret")
-    .row()
-    .text("🔢 Modo: percentual", "admin:fee_mode_percent")
-    .text("💲 Modo: fixo (R$)", "admin:fee_mode_fixed")
-    .row()
-    .text("📢 Canal ON/OFF", "admin:toggle_required_channel")
-    .text("🔗 Link do canal", "admin:set_required_channel_url")
-    .row()
-    .text("🆔 ID do canal", "admin:set_required_channel_id")
-    .text("✨ Ref ON/OFF", "admin:toggle_reference_announcements")
-    .row()
-    .text("💬 Chat referências", "admin:set_reference_chat_id")
-    .text("✍️ Texto CTA", "admin:set_reference_cta")
-    .row()
-    .text("👤 Username admin", "admin:set_admin_username")
-    .text("💸 Sacar lucro (taxas)", "admin:profit_withdraw")
-    .row()
-    .text("🤝 Afiliados ON/OFF", "admin:toggle_affiliates")
-    .text("💼 Comissão afiliado", "admin:affiliate_percent")
-    .row()
-    .text("🎭 Anúncio fake", "admin:fake_announcement")
-    .row()
-    .text("🤖 Auto fake ON/OFF", "admin:toggle_fake_auto")
-    .text("⚙️ Config fake", "admin:config_fake_auto")
-    .row()
-    .text("⬅️ Menu principal", "admin:main_menu");
+    .text("⬅️ Menu do bot", "admin:client_menu");
+function adminSectionKeyboard(section) {
+    const keyboard = new grammy_1.InlineKeyboard();
+    if (section === "users") {
+        keyboard
+            .text("👥 Listar usuários", "admin:users")
+            .text("🔎 Buscar usuário", "admin:user_lookup")
+            .row()
+            .text("🏆 Ranking saldo", "admin:ranking_balance");
+    }
+    else if (section === "finance") {
+        keyboard
+            .text("⏳ Saques pendentes", "admin:withdraw_approvals")
+            .row()
+            .text("💰 Saldo gate", "admin:gate_stats")
+            .text("💸 Sacar lucro", "admin:profit_withdraw");
+    }
+    else if (section === "fees") {
+        keyboard
+            .text("💹 Taxa global", "admin:global_fee")
+            .text("🎯 Taxa por usuário", "admin:user_fee")
+            .row()
+            .text("🔢 Modo percentual", "admin:fee_mode_percent")
+            .text("💲 Modo fixo", "admin:fee_mode_fixed")
+            .row()
+            .text("🛡️ Limite aprovação", "admin:withdraw_approval_threshold");
+    }
+    else if (section === "access") {
+        keyboard
+            .text("📄 Termos ON/OFF", "admin:toggle_terms")
+            .text("📢 Canal ON/OFF", "admin:toggle_required_channel")
+            .row()
+            .text("🔗 Link do canal", "admin:set_required_channel_url")
+            .text("🆔 ID do canal", "admin:set_required_channel_id");
+    }
+    else if (section === "integrations") {
+        keyboard
+            .text("🪪 Mistic Client ID", "admin:set_misticpay_client_id")
+            .row()
+            .text("🔐 Mistic Client Secret", "admin:set_misticpay_client_secret")
+            .row()
+            .text("👤 Username admin", "admin:set_admin_username");
+    }
+    else if (section === "affiliates") {
+        keyboard
+            .text("🤝 Afiliados ON/OFF", "admin:toggle_affiliates")
+            .row()
+            .text("💼 Comissão afiliado", "admin:affiliate_percent");
+    }
+    else if (section === "announcements") {
+        keyboard
+            .text("✨ Ref ON/OFF", "admin:toggle_reference_announcements")
+            .row()
+            .text("💬 Chat referências", "admin:set_reference_chat_id")
+            .text("✍️ Texto CTA", "admin:set_reference_cta")
+            .row()
+            .text("🎭 Anúncio fake", "admin:fake_announcement")
+            .row()
+            .text("🤖 Auto fake ON/OFF", "admin:toggle_fake_auto")
+            .text("⚙️ Config fake", "admin:config_fake_auto");
+    }
+    else if (section === "system") {
+        keyboard
+            .text("📋 Logs", "admin:logs")
+            .row()
+            .text("📨 Aviso geral", "admin:broadcast");
+    }
+    return keyboard.row().text("⬅️ Voltar categorias", "admin:main_menu");
+}
 const docsKeyboard = () => new grammy_1.InlineKeyboard()
     .text("📤 Gerar pagamento", "docs:create_payment")
     .row()
@@ -1069,6 +1106,44 @@ async function sendMainMenu(ctx, user) {
         parse_mode: "HTML",
         reply_markup: mainKeyboard(),
     });
+}
+async function sendAdminPanel(ctx) {
+    await sendManagedReply(ctx, [
+        "<b>⚙️ Painel administrativo</b>",
+        "",
+        `Termos · <b>${getTermsRequiredEnabled() ? "ON" : "OFF"}</b>`,
+        `Canal obrigatório · <b>${getRequiredChannelEnabled() ? "ON" : "OFF"}</b>`,
+        `Afiliados · <b>${repositories_1.repositories.getAffiliatesEnabled() ? "ON" : "OFF"}</b>`,
+        "",
+        "Escolha uma categoria para abrir os controles.",
+    ].join("\n"), { parse_mode: "HTML", reply_markup: adminKeyboard() });
+}
+async function sendAdminSection(ctx, section) {
+    const titles = {
+        users: "👥 Clientes",
+        finance: "💰 Financeiro",
+        fees: "💹 Taxas",
+        access: "🔐 Acesso",
+        integrations: "🪪 Integrações",
+        affiliates: "🤝 Afiliados",
+        announcements: "📣 Anúncios",
+        system: "🧾 Sistema",
+    };
+    const descriptions = {
+        users: "Listagem, busca, bloqueios, saldo e ranking de clientes.",
+        finance: "Saques pendentes, saldo da gate e retirada de lucro.",
+        fees: "Taxa global, taxa por usuário, modo fixo/percentual e aprovação manual.",
+        access: "Aceite de termos e entrada obrigatória em canal.",
+        integrations: "Credenciais MisticPay e contato administrativo.",
+        affiliates: "Ativar afiliados e definir comissão.",
+        announcements: "Referências, anúncios automáticos e anúncios manuais.",
+        system: "Logs e aviso geral para clientes.",
+    };
+    await sendManagedReply(ctx, [
+        `<b>${titles[section] ?? "⚙️ Categoria"}</b>`,
+        "",
+        descriptions[section] ?? "Escolha uma opção abaixo.",
+    ].join("\n"), { parse_mode: "HTML", reply_markup: adminSectionKeyboard(section) });
 }
 function depositStatusLabel(status) {
     const map = {
@@ -2175,16 +2250,7 @@ exports.bot.command("admin", async (ctx) => {
         await deleteUserMessage(ctx);
         return;
     }
-    await sendManagedReply(ctx, [
-        "<b>⚙️ Painel administrativo</b>",
-        "",
-        `Termos · <b>${getTermsRequiredEnabled() ? "ON" : "OFF"}</b>`,
-        `Canal obrigatório · <b>${getRequiredChannelEnabled() ? "ON" : "OFF"}</b>`,
-        "",
-        "Use os botões abaixo para gerenciar clientes, taxas, canal, termos e integrações.",
-        "",
-        "<i>Toque em uma opção abaixo.</i>",
-    ].join("\n"), { parse_mode: "HTML", reply_markup: adminKeyboard() });
+    await sendAdminPanel(ctx);
     await deleteUserMessage(ctx);
 });
 exports.bot.callbackQuery(/^menu:/, async (ctx) => {
@@ -2644,7 +2710,15 @@ exports.bot.callbackQuery(/^admin:/, async (ctx) => {
     const parts = ctx.callbackQuery.data.split(":");
     const action = parts[1];
     if (action === "main_menu") {
+        await sendAdminPanel(ctx);
+        return;
+    }
+    if (action === "client_menu") {
         await sendMainMenu(ctx, user);
+        return;
+    }
+    if (action === "section") {
+        await sendAdminSection(ctx, parts[2] ?? "");
         return;
     }
     if (action === "users") {
