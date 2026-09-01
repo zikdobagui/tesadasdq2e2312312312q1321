@@ -45,6 +45,7 @@ const adminKeyboard = () =>
     .text("🎯 Taxa por usuário", "admin:user_fee")
     .row()
     .text("🛡️ Limite aprovação", "admin:withdraw_approval_threshold")
+    .text("📄 Termos ON/OFF", "admin:toggle_terms")
     .row()
     .text("🪪 Mistic CI", "admin:set_misticpay_client_id")
     .text("🔐 Mistic CS", "admin:set_misticpay_client_secret")
@@ -430,6 +431,11 @@ function buildAffiliateLink(user: UserRecord): string {
 
 function getRequiredChannelEnabled(): boolean {
   return repositories.getBooleanSetting("requireChannelJoin");
+}
+
+function getTermsRequiredEnabled(): boolean {
+  const value = repositories.getSetting("requireTermsAcceptance");
+  return value === null ? true : value === "true";
 }
 
 function getRequiredChannelId(): string | null {
@@ -1147,6 +1153,10 @@ async function enforceRequiredChannel(ctx: AppContext, user: UserRecord): Promis
 }
 
 async function enforceTermsAccepted(ctx: AppContext, user: UserRecord): Promise<boolean> {
+  if (!getTermsRequiredEnabled()) {
+    return true;
+  }
+
   if (user.termsAcceptedAt) {
     return true;
   }
@@ -2579,7 +2589,10 @@ bot.command("admin", async (ctx) => {
     [
       "<b>⚙️ Painel administrativo</b>",
       "",
-      "Taxas · gate · ranking · canal · referências · usuários e logs.",
+      `Termos · <b>${getTermsRequiredEnabled() ? "ON" : "OFF"}</b>`,
+      `Canal obrigatório · <b>${getRequiredChannelEnabled() ? "ON" : "OFF"}</b>`,
+      "",
+      "Use os botões abaixo para gerenciar clientes, taxas, canal, termos e integrações.",
       "",
       "<i>Toque em uma opção abaixo.</i>",
     ].join("\n"),
@@ -3608,6 +3621,17 @@ bot.callbackQuery(/^admin:/, async (ctx) => {
     await sendManagedReply(
       ctx,
       `<b>📢 Canal obrigatório</b>\n\n${next ? "✅ Ativado" : "⏸️ Desativado"}.`,
+      { parse_mode: "HTML", reply_markup: adminKeyboard() },
+    );
+    return;
+  }
+
+  if (action === "toggle_terms") {
+    const next = !getTermsRequiredEnabled();
+    repositories.setBooleanSetting("requireTermsAcceptance", next);
+    await sendManagedReply(
+      ctx,
+      `<b>📄 Aceite de termos</b>\n\n${next ? "✅ Ativado" : "⏸️ Desativado"}.`,
       { parse_mode: "HTML", reply_markup: adminKeyboard() },
     );
     return;

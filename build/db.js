@@ -158,6 +158,7 @@ exports.db.prepare(`
 const defaultSettings = [
     ["globalFeeMode", "percent"],
     ["globalFeeFixed", "0"],
+    ["requireTermsAcceptance", "true"],
     ["requireChannelJoin", "false"],
     ["requiredChannelId", ""],
     ["requiredChannelUrl", ""],
