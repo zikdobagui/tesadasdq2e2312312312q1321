@@ -578,6 +578,30 @@ function miniAppHtml(): string {
       display: grid;
       gap: 10px;
     }
+    .api-grid {
+      display: grid;
+      gap: 10px;
+    }
+    .api-card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255,255,255,.025);
+      padding: 12px;
+      display: grid;
+      gap: 8px;
+    }
+    .api-card code {
+      color: #d8ffe9;
+      font-size: 12px;
+      overflow-wrap: anywhere;
+    }
+    .api-card ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
     .qr {
       width: min(220px, 100%);
       border-radius: var(--radius);
@@ -721,6 +745,7 @@ function miniAppHtml(): string {
             '<button class="action" data-action="withdraw"><span class="action-icon">↗</span><span><b>Sacar</b><small>Enviar para chave PIX</small></span></button>' +
             '<button class="action" data-action="extract"><span class="action-icon">≡</span><span><b>Extrato</b><small>Últimos movimentos</small></span></button>' +
             '<button class="action" data-action="affiliates"><span class="action-icon">%</span><span><b>Afiliados</b><small>Comissões e link</small></span></button>' +
+            '<button class="action" data-action="api"><span class="action-icon">{}</span><span><b>API</b><small>Integração externa</small></span></button>' +
           '</div>' +
         '</section>' +
         '<section class="panel work-panel is-hidden" id="workPanel"></section>';
@@ -735,6 +760,7 @@ function miniAppHtml(): string {
       if (action === "withdraw") return openWithdraw();
       if (action === "extract") return openExtract();
       if (action === "affiliates") return openAffiliates();
+      if (action === "api") return openApiDocs();
     }
 
     function openDeposit() {
@@ -869,6 +895,43 @@ function miniAppHtml(): string {
           '<div class="list">' + recent + '</div>' +
         '</div>'
       );
+    }
+
+    function openApiDocs() {
+      const createUrl = location.origin + "/create_payment?user_id=" + encodeURIComponent(currentData.user.telegramId) + "&valor=10.50";
+      const verifyUrl = location.origin + "/verify_payment?payment_id=terrorpay-deposit-EXEMPLO";
+      setWorkPanel(
+        '<div class="panel-head"><h2>API</h2><span class="muted">Integração</span></div>' +
+        '<div class="work api-grid">' +
+          '<div class="api-card">' +
+            '<strong>Gerar pagamento PIX</strong>' +
+            '<code>GET /create_payment</code>' +
+            '<ul><li>user_id: ID do usuário no Telegram</li><li>valor: valor do pagamento em reais</li></ul>' +
+            '<div class="link" id="createPaymentUrl">' + escapeHtml(createUrl) + '</div>' +
+            '<button class="secondary" type="button" id="copyCreatePayment">Copiar exemplo</button>' +
+          '</div>' +
+          '<div class="api-card">' +
+            '<strong>Verificar pagamento</strong>' +
+            '<code>GET /verify_payment</code>' +
+            '<ul><li>payment_id: txid retornado na criação do PIX</li></ul>' +
+            '<div class="link" id="verifyPaymentUrl">' + escapeHtml(verifyUrl) + '</div>' +
+            '<button class="secondary" type="button" id="copyVerifyPayment">Copiar exemplo</button>' +
+          '</div>' +
+          '<div class="api-card">' +
+            '<strong>Retorno esperado</strong>' +
+            '<code>{ "txid": "...", "pixCopiaECola": "...", "qrcode_base64": "...", "status": "ATIVA" }</code>' +
+            '<span class="muted">Taxa aplicada: ' + escapeHtml(currentData.summary.feeDisplay) + ' por transação.</span>' +
+          '</div>' +
+        '</div>'
+      );
+      document.getElementById("copyCreatePayment").addEventListener("click", async () => {
+        await navigator.clipboard?.writeText(createUrl).catch(() => {});
+        notify("Exemplo de criação copiado.");
+      });
+      document.getElementById("copyVerifyPayment").addEventListener("click", async () => {
+        await navigator.clipboard?.writeText(verifyUrl).catch(() => {});
+        notify("Exemplo de verificação copiado.");
+      });
     }
 
     async function boot(showLoading = true) {
