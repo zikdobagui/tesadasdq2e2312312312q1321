@@ -142,6 +142,13 @@ function detectPixKeyType(pixKeyRaw) {
     }
     return "CHAVE_ALEATORIA";
 }
+function maskPixKeyForApp(pixKey) {
+    const trimmed = pixKey.trim();
+    if (trimmed.length <= 8) {
+        return trimmed;
+    }
+    return `${trimmed.slice(0, 4)}...${trimmed.slice(-4)}`;
+}
 function resolveMiniAppUserRecord(req) {
     const resolved = resolveMiniAppUser(req);
     if (!resolved) {
@@ -739,6 +746,11 @@ function miniAppHtml() {
       const termsField = currentData.user.termsAcceptedAt
         ? ""
         : '<div class="field"><label>Termos de uso</label><label class="check"><input type="checkbox" name="acceptTerms" required> <span>Confirmo que minhas transações são lícitas e autorizadas. Em caso de uso malicioso ou violação dos termos, o saldo poderá ficar bloqueado e não será estornado.</span></label></div>';
+      const savedOptions = currentData.savedPixKeys.length
+        ? '<div class="field"><label>Chaves salvas</label><select class="select" id="savedPixKey"><option value="">Informar nova chave</option>' +
+          currentData.savedPixKeys.map((item) => '<option value="' + escapeHtml(item.id) + '">' + escapeHtml((item.alias || item.pixKeyType) + " - " + item.maskedPixKey) + '</option>').join("") +
+          '</select></div>'
+        : "";
       setWorkPanel(
         '<div class="panel-head"><h2>Novo saque</h2><span class="muted">PIX</span></div>' +
         '<form class="work" id="withdrawForm">' +
@@ -746,12 +758,25 @@ function miniAppHtml() {
             '<div class="field"><label>Valor em reais</label><input class="input" name="amount" inputmode="decimal" placeholder="Ex.: 10.50" required></div>' +
             '<div class="field"><label>Modo da taxa</label><select class="select" name="feeMode"><option value="add_fee">Valor + taxa</option><option value="discount_fee">Descontar taxa</option></select></div>' +
           '</div>' +
+          savedOptions +
           '<div class="field"><label>Chave PIX</label><input class="input" name="pixKey" placeholder="CPF, e-mail, telefone ou chave aleatoria" required></div>' +
+          '<label class="check"><input type="checkbox" name="savePixKey"> <span>Salvar esta chave PIX para próximos saques</span></label>' +
+          '<div class="field" id="pixAliasField" style="display:none"><label>Apelido da chave</label><input class="input" name="pixKeyAlias" placeholder="Ex.: Minha conta principal"></div>' +
           termsField +
           '<button class="submit" type="submit">Solicitar saque</button>' +
           '<div id="operationResult"></div>' +
         '</form>'
       );
+      const savedSelect = document.getElementById("savedPixKey");
+      const pixInput = document.querySelector("#withdrawForm input[name='pixKey']");
+      savedSelect?.addEventListener("change", () => {
+        const item = currentData.savedPixKeys.find((key) => String(key.id) === savedSelect.value);
+        pixInput.value = item ? item.pixKey : "";
+        pixInput.required = !item;
+      });
+      document.querySelector("#withdrawForm input[name='savePixKey']").addEventListener("change", (event) => {
+        document.getElementById("pixAliasField").style.display = event.currentTarget.checked ? "grid" : "none";
+      });
       document.getElementById("withdrawForm").addEventListener("submit", async (event) => {
         event.preventDefault();
         const form = new FormData(event.currentTarget);
@@ -764,7 +789,9 @@ function miniAppHtml() {
               amount: Number(form.get("amount").toString().replace(",", ".")),
               pixKey: form.get("pixKey").toString(),
               feeMode: form.get("feeMode").toString(),
-              acceptTerms: form.get("acceptTerms") === "on"
+              acceptTerms: form.get("acceptTerms") === "on",
+              savePixKey: form.get("savePixKey") === "on",
+              pixKeyAlias: form.get("pixKeyAlias")?.toString() || ""
             })
           });
           resultBox.innerHTML =
@@ -774,6 +801,7 @@ function miniAppHtml() {
               '<span>Valor enviado: ' + money.format(withdraw.amount) + '</span>' +
               '<span>Taxa: ' + money.format(withdraw.feeAmount) + '</span>' +
               '<span>Débito total: ' + money.format(withdraw.totalDebit) + '</span>' +
+              (withdraw.savedPixKey ? '<span>Chave PIX salva para próximos saques.</span>' : '') +
             '</div>';
           currentData = await apiFetch("/app/api/me").catch(() => currentData);
         } catch (error) {
@@ -848,6 +876,10 @@ function registerMiniAppRoutes(app) {
             statusLabel: withdrawStatusLabel(item.status),
         }));
         const affiliate = repositories_1.repositories.getAffiliateSummary(user.id);
+        const savedPixKeys = repositories_1.repositories.listSavedPixKeys(user.id).slice(0, 10).map((item) => ({
+            ...item,
+            maskedPixKey: maskPixKeyForApp(item.pixKey),
+        }));
         res.json({
             ok: true,
             verified: resolved.verified,
@@ -874,6 +906,7 @@ function registerMiniAppRoutes(app) {
             },
             deposits,
             withdraws,
+            savedPixKeys,
             affiliate: {
                 ...affiliate,
                 percent: repositories_1.repositories.getAffiliateCommissionPercent(),
@@ -922,6 +955,8 @@ function registerMiniAppRoutes(app) {
         const amount = Number(req.body?.amount);
         const pixKey = String(req.body?.pixKey ?? "").trim();
         const feeMode = req.body?.feeMode === "discount_fee" ? "discount_fee" : "add_fee";
+        const savePixKey = req.body?.savePixKey === true;
+        const pixKeyAlias = String(req.body?.pixKeyAlias ?? "").trim();
         if (!Number.isFinite(amount) || amount <= 0) {
             res.status(400).json({ ok: false, message: "Informe um valor valido para saque." });
             return;
@@ -945,10 +980,16 @@ function registerMiniAppRoutes(app) {
             const user = repositories_1.repositories.getUserById(resolved.user.id) ?? resolved.user;
             const pixKeyType = detectPixKeyType(pixKey);
             const withdraw = await terrorPayService_1.terrorPayService.requestWithdraw(user, amount, pixKey, pixKeyType, feeMode);
+            let savedPixKey = false;
+            if (savePixKey && !repositories_1.repositories.hasSavedPixKey(user.id, pixKey, pixKeyType)) {
+                repositories_1.repositories.savePixKey(user.id, pixKey, pixKeyType, pixKeyAlias || undefined);
+                savedPixKey = true;
+            }
             res.json({
                 ok: true,
                 ...withdraw,
                 pixKeyType,
+                savedPixKey,
                 statusLabel: withdrawStatusLabel(withdraw.status),
             });
         }

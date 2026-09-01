@@ -1048,14 +1048,21 @@ async function notifyAdminsError(context: string, error: unknown, user?: UserRec
   }
 }
 
-async function notifyAdminsDepositCompleted(user: UserRecord, amount: number): Promise<void> {
+async function notifyAdminsDepositCompleted(
+  user: UserRecord,
+  netAmount: number,
+  grossAmount = netAmount,
+  feeAmount = 0,
+): Promise<void> {
   try {
     await notifyAdmins(
       [
         "<b>💰 Depósito aprovado</b>",
         "",
         `Cliente · ${buildUserAdminLabel(user)}`,
-        `Valor creditado · ${formatCurrency(amount)}`,
+        `Valor recebido · ${formatCurrency(grossAmount)}`,
+        `Taxa · ${formatCurrency(feeAmount)}`,
+        `Valor creditado · ${formatCurrency(netAmount)}`,
         `Saldo atual · ${formatCurrency(terrorPayService.getUserBalance(user.id))}`,
       ].join("\n"),
     );
@@ -4004,7 +4011,9 @@ export async function notifyWithdrawCompleted(
 
 export async function notifyDepositCompleted(
   user: UserRecord,
-  amount: number,
+  netAmount: number,
+  grossAmount = netAmount,
+  feeAmount = 0,
 ): Promise<void> {
   try {
     await bot.api.sendMessage(
@@ -4012,7 +4021,9 @@ export async function notifyDepositCompleted(
       [
         "<b>OK Depósito aprovado</b>",
         "",
-        `Valor creditado - ${formatCurrency(amount)}`,
+        `Valor recebido - ${formatCurrency(grossAmount)}`,
+        `Taxa - ${formatCurrency(feeAmount)}`,
+        `Valor creditado - ${formatCurrency(netAmount)}`,
         `Saldo atual - ${formatCurrency(terrorPayService.getUserBalance(user.id))}`,
       ].join("\n"),
       { parse_mode: "HTML" },
@@ -4024,7 +4035,7 @@ export async function notifyDepositCompleted(
     });
   }
 
-  await notifyAdminsDepositCompleted(user, amount);
+  await notifyAdminsDepositCompleted(user, netAmount, grossAmount, feeAmount);
 }
 
 let fakeAnnouncementTimer: NodeJS.Timeout | null = null;

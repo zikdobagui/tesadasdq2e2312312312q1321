@@ -11,25 +11,22 @@ function round(value) {
     return Math.round(value * 100) / 100;
 }
 const DEPOSIT_EXPIRATION_MS = 30 * 60 * 1000;
-function calcFee(amount) {
+const PROVIDER_TRANSACTION_COST = 0.5;
+function calcPercentFee(userId, amount) {
     const mode = repositories_1.repositories.getGlobalFeeMode();
     if (mode === "fixed") {
-        const feeAmount = round(repositories_1.repositories.getGlobalFeeFixed());
-        return { feePercent: 0, feeAmount, mode };
-    }
-    const feePercent = repositories_1.repositories.getEffectiveFeePercent(0); // global percent
-    const feeAmount = round((amount * feePercent) / 100);
-    return { feePercent, feeAmount, mode };
-}
-function calcFeeForUser(userId, amount) {
-    const mode = repositories_1.repositories.getGlobalFeeMode();
-    if (mode === "fixed") {
-        const feeAmount = round(repositories_1.repositories.getGlobalFeeFixed());
+        const feeAmount = round(repositories_1.repositories.getGlobalFeeFixed() + PROVIDER_TRANSACTION_COST);
         return { feePercent: 0, feeAmount, mode };
     }
     const feePercent = repositories_1.repositories.getEffectiveFeePercent(userId);
-    const feeAmount = round((amount * feePercent) / 100);
+    const feeAmount = round((amount * feePercent) / 100 + PROVIDER_TRANSACTION_COST);
     return { feePercent, feeAmount, mode };
+}
+function calcFee(amount) {
+    return calcPercentFee(0, amount);
+}
+function calcFeeForUser(userId, amount) {
+    return calcPercentFee(userId, amount);
 }
 function calcWithdrawPreview(userId, requestedAmount, feeMode) {
     const { feePercent, feeAmount, mode } = calcFeeForUser(userId, requestedAmount);
@@ -158,13 +155,16 @@ function hasValidProviderTransactionId(value) {
 function isPendingWithdrawStatus(status) {
     return ["PENDENTE", "PENDING", "APROVANDO"].includes(String(status ?? "").trim().toUpperCase());
 }
-function dispatchDepositApprovalNotifications(userId, netAmount) {
+function dispatchDepositApprovalNotifications(userId, netAmount, depositId) {
     const user = repositories_1.repositories.getUserById(userId);
     if (!user) {
         return;
     }
+    const deposit = depositId ? repositories_1.repositories.getDepositById(depositId) : null;
+    const grossAmount = Number(deposit?.amount ?? netAmount);
+    const feeAmount = Number(deposit?.feeAmount ?? 0);
     import("../bot.js").then(({ notifyDepositCompleted, publishReferenceAnnouncement }) => {
-        notifyDepositCompleted(user, netAmount).catch(() => { });
+        notifyDepositCompleted(user, netAmount, grossAmount, feeAmount).catch(() => { });
         publishReferenceAnnouncement(user, netAmount).catch(() => { });
     }).catch(() => { });
 }
@@ -189,8 +189,8 @@ exports.terrorPayService = {
         repositories_1.repositories.repairCompletedDepositCredits(userId);
         const mode = repositories_1.repositories.getGlobalFeeMode();
         const feeDisplay = mode === "fixed"
-            ? `R$ ${repositories_1.repositories.getGlobalFeeFixed().toFixed(2)} fixo`
-            : `${repositories_1.repositories.getEffectiveFeePercent(userId)}%`;
+            ? `R$ ${round(repositories_1.repositories.getGlobalFeeFixed() + PROVIDER_TRANSACTION_COST).toFixed(2)} fixo`
+            : `${repositories_1.repositories.getEffectiveFeePercent(userId)}% + R$ ${PROVIDER_TRANSACTION_COST.toFixed(2)}`;
         return {
             user: repositories_1.repositories.getUserById(userId),
             balance: repositories_1.repositories.getBalance(userId),
@@ -633,7 +633,7 @@ exports.terrorPayService = {
                 }
                 if (status === "COMPLETO" && deposit.status !== "COMPLETO") {
                     repositories_1.repositories.completeDeposit(deposit.id, deposit.userId, Number(deposit.netAmount));
-                    dispatchDepositApprovalNotifications(deposit.userId, Number(deposit.netAmount));
+                    dispatchDepositApprovalNotifications(deposit.userId, Number(deposit.netAmount), deposit.id);
                     return { status, justCompleted: true };
                 }
                 if (status !== deposit.status) {
@@ -889,7 +889,7 @@ exports.terrorPayService = {
             let justCompleted = false;
             if (status === "COMPLETO" && deposit.status !== "COMPLETO") {
                 repositories_1.repositories.completeDeposit(deposit.id, deposit.userId, deposit.netAmount);
-                dispatchDepositApprovalNotifications(deposit.userId, Number(deposit.netAmount));
+                dispatchDepositApprovalNotifications(deposit.userId, Number(deposit.netAmount), deposit.id);
                 justCompleted = true;
             }
             else if (status) {

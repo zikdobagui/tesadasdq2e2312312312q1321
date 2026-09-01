@@ -903,13 +903,15 @@ async function notifyAdminsError(context, error, user, extra) {
         });
     }
 }
-async function notifyAdminsDepositCompleted(user, amount) {
+async function notifyAdminsDepositCompleted(user, netAmount, grossAmount = netAmount, feeAmount = 0) {
     try {
         await notifyAdmins([
             "<b>💰 Depósito aprovado</b>",
             "",
             `Cliente · ${buildUserAdminLabel(user)}`,
-            `Valor creditado · ${(0, format_1.formatCurrency)(amount)}`,
+            `Valor recebido · ${(0, format_1.formatCurrency)(grossAmount)}`,
+            `Taxa · ${(0, format_1.formatCurrency)(feeAmount)}`,
+            `Valor creditado · ${(0, format_1.formatCurrency)(netAmount)}`,
             `Saldo atual · ${(0, format_1.formatCurrency)(terrorPayService_1.terrorPayService.getUserBalance(user.id))}`,
         ].join("\n"));
     }
@@ -3302,12 +3304,14 @@ async function notifyWithdrawCompleted(user, amount, pixKey, status) {
         await publishReferenceAnnouncement(user, amount, "withdraw");
     }
 }
-async function notifyDepositCompleted(user, amount) {
+async function notifyDepositCompleted(user, netAmount, grossAmount = netAmount, feeAmount = 0) {
     try {
         await exports.bot.api.sendMessage(user.telegramId, [
             "<b>OK Depósito aprovado</b>",
             "",
-            `Valor creditado - ${(0, format_1.formatCurrency)(amount)}`,
+            `Valor recebido - ${(0, format_1.formatCurrency)(grossAmount)}`,
+            `Taxa - ${(0, format_1.formatCurrency)(feeAmount)}`,
+            `Valor creditado - ${(0, format_1.formatCurrency)(netAmount)}`,
             `Saldo atual - ${(0, format_1.formatCurrency)(terrorPayService_1.terrorPayService.getUserBalance(user.id))}`,
         ].join("\n"), { parse_mode: "HTML" });
     }
@@ -3317,7 +3321,7 @@ async function notifyDepositCompleted(user, amount) {
             error: error instanceof Error ? error.message : String(error),
         });
     }
-    await notifyAdminsDepositCompleted(user, amount);
+    await notifyAdminsDepositCompleted(user, netAmount, grossAmount, feeAmount);
 }
 let fakeAnnouncementTimer = null;
 async function sendFakeAnnouncement(amount) {
