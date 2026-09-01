@@ -151,18 +151,19 @@ function miniAppHtml() {
   <style>
     :root {
       color-scheme: dark;
-      --bg: #090c0d;
-      --panel: #121618;
-      --panel-2: #181f22;
-      --panel-3: #0e1214;
-      --text: #f6fbf8;
-      --muted: #94a39e;
-      --line: rgba(214, 255, 238, .09);
-      --line-strong: rgba(214, 255, 238, .16);
-      --accent: #28e18a;
-      --accent-2: #e8b956;
-      --cyan: #6fd8ff;
-      --danger: #ff6d72;
+      --bg: #0a1010;
+      --panel: #111817;
+      --panel-2: #182321;
+      --panel-3: #edf8f1;
+      --text: #f8fffb;
+      --ink: #07110d;
+      --muted: #91a49b;
+      --line: rgba(231, 255, 243, .10);
+      --line-strong: rgba(231, 255, 243, .18);
+      --accent: #14c871;
+      --accent-2: #96f0bf;
+      --cyan: #72e0c4;
+      --danger: #ff6470;
       --radius: 8px;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
@@ -170,18 +171,14 @@ function miniAppHtml() {
     body {
       margin: 0;
       min-height: 100vh;
-      background:
-        linear-gradient(rgba(255, 255, 255, .025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, .022) 1px, transparent 1px),
-        var(--tg-theme-bg-color, var(--bg));
-      background-size: 36px 36px;
+      background: var(--tg-theme-bg-color, var(--bg));
       color: var(--tg-theme-text-color, var(--text));
     }
     button, input { font: inherit; }
     .shell {
       width: min(1240px, 100%);
       margin: 0 auto;
-      padding: calc(12px + env(safe-area-inset-top)) 12px calc(22px + env(safe-area-inset-bottom));
+      padding: calc(12px + env(safe-area-inset-top)) 12px calc(24px + env(safe-area-inset-bottom));
     }
     .topbar {
       display: flex;
@@ -189,6 +186,7 @@ function miniAppHtml() {
       justify-content: space-between;
       gap: 14px;
       margin-bottom: 10px;
+      padding: 2px 2px 0;
     }
     .brand {
       display: flex;
@@ -199,13 +197,13 @@ function miniAppHtml() {
     .mark {
       width: 42px;
       height: 42px;
-      border-radius: var(--radius);
+      border-radius: 999px;
       display: grid;
       place-items: center;
-      background: linear-gradient(135deg, #28e18a, #b6ffd8);
-      color: #06120c;
+      background: #f4fff8;
+      color: var(--accent);
       font-weight: 900;
-      box-shadow: 0 0 0 1px rgba(40, 225, 138, .22), 0 12px 32px rgba(40, 225, 138, .16);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .18);
     }
     h1, h2, p { margin: 0; }
     h1 { font-size: 20px; line-height: 1.1; letter-spacing: 0; }
@@ -219,7 +217,7 @@ function miniAppHtml() {
       color: var(--text);
       font-size: 12px;
       white-space: nowrap;
-      background: rgba(18, 22, 24, .8);
+      background: rgba(255, 255, 255, .07);
     }
     .eyebrow {
       color: var(--accent);
@@ -238,25 +236,23 @@ function miniAppHtml() {
       box-shadow: 0 0 14px rgba(40, 225, 138, .9);
     }
     .hero {
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background:
-        linear-gradient(135deg, rgba(40, 225, 138, .13), transparent 32%),
-        linear-gradient(160deg, rgba(111, 216, 255, .08), transparent 46%),
-        var(--panel);
-      padding: 14px;
+      border: 0;
+      border-radius: 0 0 26px 26px;
+      background: linear-gradient(160deg, #16d875 0%, #0fb466 46%, #087f4d 100%);
+      padding: 18px 16px 16px;
       position: relative;
       overflow: hidden;
-      box-shadow: 0 22px 70px rgba(0, 0, 0, .22);
+      box-shadow: 0 18px 54px rgba(9, 119, 70, .25);
     }
     .hero::after {
       content: "";
       position: absolute;
       inset: 0;
       pointer-events: none;
-      background-image: linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
-      background-size: 64px 100%;
-      opacity: .18;
+      background:
+        radial-gradient(circle at 88% 12%, rgba(255,255,255,.20), transparent 24%),
+        linear-gradient(115deg, transparent 0 58%, rgba(255,255,255,.08) 58% 100%);
+      opacity: .9;
     }
     .hero > * { position: relative; z-index: 1; }
     .hero-top {
@@ -273,12 +269,16 @@ function miniAppHtml() {
       text-align: right;
     }
     .balance-label { color: var(--muted); font-size: 12px; }
+    .hero .balance-label,
+    .hero .subtitle,
+    .hero .muted { color: rgba(255,255,255,.78); }
     .balance {
       font-size: clamp(30px, 6vw, 46px);
       line-height: 1;
       font-weight: 850;
       letter-spacing: 0;
       margin: 6px 0 0;
+      color: white;
     }
     .status-strip {
       display: grid;
@@ -290,13 +290,15 @@ function miniAppHtml() {
       min-height: 48px;
       border: 1px solid var(--line);
       border-radius: var(--radius);
-      background: rgba(9, 12, 13, .42);
+      background: rgba(255, 255, 255, .13);
       padding: 9px;
       display: grid;
       align-content: center;
       gap: 3px;
     }
     .status-item b { font-size: 12px; }
+    .hero .status-item b,
+    .hero .metric strong { color: white; }
     .hero-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -309,6 +311,10 @@ function miniAppHtml() {
       background: rgba(24, 31, 34, .82);
       padding: 9px 10px;
     }
+    .hero .metric {
+      background: rgba(255,255,255,.14);
+      border-color: rgba(255,255,255,.18);
+    }
     .metric span {
       color: var(--muted);
       font-size: 11px;
@@ -316,6 +322,7 @@ function miniAppHtml() {
       text-transform: uppercase;
       letter-spacing: .07em;
     }
+    .hero .metric span { color: rgba(255,255,255,.72); }
     .metric strong { display: block; font-size: 16px; margin-top: 4px; letter-spacing: 0; }
     .dashboard {
       display: grid;
@@ -330,10 +337,10 @@ function miniAppHtml() {
     }
     .action {
       min-height: 66px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: linear-gradient(180deg, rgba(24,31,34,.98), rgba(14,18,20,.98));
-      color: var(--text);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 18px;
+      background: #f5fff9;
+      color: var(--ink);
       display: grid;
       grid-template-columns: 34px 1fr;
       align-items: center;
@@ -341,9 +348,9 @@ function miniAppHtml() {
       gap: 9px;
       padding: 10px;
       cursor: pointer;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+      box-shadow: 0 12px 34px rgba(0, 0, 0, .16);
     }
-    .action:hover { border-color: rgba(40, 225, 138, .34); }
+    .action:hover { border-color: rgba(20, 200, 113, .34); }
     .action:active { transform: translateY(1px); }
     .action-icon {
       width: 34px;
@@ -351,8 +358,8 @@ function miniAppHtml() {
       border-radius: var(--radius);
       display: grid;
       place-items: center;
-      background: rgba(40, 225, 138, .12);
-      border: 1px solid rgba(40, 225, 138, .25);
+      background: rgba(20, 200, 113, .12);
+      border: 1px solid rgba(20, 200, 113, .22);
       color: var(--accent);
       font-size: 18px;
       font-weight: 900;
@@ -360,7 +367,7 @@ function miniAppHtml() {
     .action b { font-size: 14px; }
     .action b,
     .action small { display: block; }
-    .action small { color: var(--muted); font-size: 11px; line-height: 1.25; margin-top: 2px; }
+    .action small { color: #5e7369; font-size: 11px; line-height: 1.25; margin-top: 2px; }
     .grid {
       display: grid;
       grid-template-columns: 1.2fr .8fr;
@@ -368,8 +375,8 @@ function miniAppHtml() {
     }
     .panel {
       border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: rgba(18, 22, 24, .96);
+      border-radius: 18px;
+      background: rgba(17, 24, 23, .96);
       overflow: hidden;
       box-shadow: 0 18px 56px rgba(0, 0, 0, .16);
     }
@@ -416,7 +423,7 @@ function miniAppHtml() {
     }
     .link {
       border: 1px dashed rgba(37, 208, 127, .45);
-      border-radius: var(--radius);
+      border-radius: 14px;
       background: rgba(37, 208, 127, .08);
       color: var(--text);
       padding: 9px;
@@ -426,7 +433,7 @@ function miniAppHtml() {
     .copy {
       min-height: 42px;
       border: 0;
-      border-radius: var(--radius);
+      border-radius: 14px;
       background: var(--accent);
       color: #06120c;
       font-weight: 850;
@@ -465,7 +472,7 @@ function miniAppHtml() {
       width: 100%;
       min-height: 40px;
       border: 1px solid var(--line);
-      border-radius: var(--radius);
+      border-radius: 14px;
       background: #0d1113;
       color: var(--text);
       padding: 0 12px;
@@ -478,7 +485,7 @@ function miniAppHtml() {
     .submit {
       min-height: 40px;
       border: 0;
-      border-radius: var(--radius);
+      border-radius: 14px;
       background: var(--accent);
       color: #06120c;
       font-weight: 850;
@@ -487,7 +494,7 @@ function miniAppHtml() {
     .secondary {
       min-height: 40px;
       border: 1px solid var(--line);
-      border-radius: var(--radius);
+      border-radius: 14px;
       background: var(--panel-2);
       color: var(--text);
       font-weight: 750;
@@ -495,7 +502,7 @@ function miniAppHtml() {
     }
     .result {
       border: 1px solid var(--line);
-      border-radius: var(--radius);
+      border-radius: 14px;
       background: var(--panel-2);
       padding: 12px;
       display: grid;
@@ -619,11 +626,11 @@ function miniAppHtml() {
           '<div class="hero">' +
             '<div class="hero-top">' +
               '<div><p class="balance-label">Saldo disponivel</p><div class="balance">' + money.format(data.balance) + '</div></div>' +
-              '<div class="hero-note"><span class="pill"><span class="status-dot"></span>Conta operacional</span><p class="subtitle">PIX, saques e afiliados em tempo real</p></div>' +
+              '<div class="hero-note"><span class="pill"><span class="status-dot"></span>Conta ativa</span><p class="subtitle">PIX, saques e afiliados em tempo real</p></div>' +
             '</div>' +
             '<div class="status-strip">' +
-              '<div class="status-item"><span class="muted">Segurança</span><b>Telegram WebApp</b></div>' +
-              '<div class="status-item"><span class="muted">Liquidação</span><b>PIX integrado</b></div>' +
+              '<div class="status-item"><span class="muted">Segurança</span><b>WebApp</b></div>' +
+              '<div class="status-item"><span class="muted">Liquidação</span><b>PIX</b></div>' +
               '<div class="status-item"><span class="muted">Sessão</span><b>' + (data.verified ? "Verificada" : "Preview local") + '</b></div>' +
             '</div>' +
             '<div class="hero-grid">' +
