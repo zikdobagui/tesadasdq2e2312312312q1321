@@ -1146,6 +1146,36 @@ async function enforceRequiredChannel(ctx: AppContext, user: UserRecord): Promis
   return false;
 }
 
+async function enforceTermsAccepted(ctx: AppContext, user: UserRecord): Promise<boolean> {
+  if (user.termsAcceptedAt) {
+    return true;
+  }
+
+  ctx.session.flow = { name: "idle" };
+  ctx.session.pendingWithdraw = undefined;
+  await sendManagedReply(ctx, buildTermsPrompt(), {
+    parse_mode: "HTML",
+    reply_markup: termsKeyboard(),
+  });
+  return false;
+}
+
+async function enforceClientAccess(ctx: AppContext, user: UserRecord): Promise<boolean> {
+  if (user.role === "admin") {
+    return enforceUserAvailability(ctx, user);
+  }
+
+  if (!(await enforceTermsAccepted(ctx, user))) {
+    return false;
+  }
+
+  if (!(await enforceUserAvailability(ctx, user))) {
+    return false;
+  }
+
+  return enforceRequiredChannel(ctx, user);
+}
+
 async function sendManagedReply(
   ctx: AppContext,
   text: string,
@@ -1717,7 +1747,7 @@ function buildVerifyPaymentDocs(): string {
 }
 
 async function handleTextMessage(ctx: AppContext, user: UserRecord, text: string): Promise<void> {
-  if (!(await enforceUserAvailability(ctx, user))) {
+  if (!(await enforceClientAccess(ctx, user))) {
     return;
   }
 
@@ -2517,11 +2547,7 @@ bot.command("start", async (ctx) => {
     telegramId: user.telegramId,
     referrerTelegramId,
   });
-  if (user.role !== "admin" && !(await enforceRequiredChannel(ctx, user))) {
-    await deleteUserMessage(ctx);
-    return;
-  }
-  if (!(await enforceUserAvailability(ctx, user))) {
+  if (!(await enforceClientAccess(ctx, user))) {
     await deleteUserMessage(ctx);
     return;
   }
@@ -2531,11 +2557,7 @@ bot.command("start", async (ctx) => {
 
 bot.command("menu", async (ctx) => {
   const user = ensureUser(ctx);
-  if (user.role !== "admin" && !(await enforceRequiredChannel(ctx, user))) {
-    await deleteUserMessage(ctx);
-    return;
-  }
-  if (!(await enforceUserAvailability(ctx, user))) {
+  if (!(await enforceClientAccess(ctx, user))) {
     await deleteUserMessage(ctx);
     return;
   }
@@ -2571,10 +2593,7 @@ bot.callbackQuery(/^menu:/, async (ctx) => {
   const action = ctx.callbackQuery.data.split(":")[1];
   await ctx.answerCallbackQuery();
 
-  if (user.role !== "admin" && !(await enforceRequiredChannel(ctx, user))) {
-    return;
-  }
-  if (!(await enforceUserAvailability(ctx, user))) {
+  if (!(await enforceClientAccess(ctx, user))) {
     return;
   }
 
@@ -2731,21 +2750,27 @@ bot.callbackQuery(/^terms:/, async (ctx) => {
 
   if (action === "back") {
     ctx.session.flow = { name: "idle" };
-    await sendMainMenu(ctx, user);
+    await sendManagedReply(ctx, buildTermsPrompt(), {
+      parse_mode: "HTML",
+      reply_markup: termsKeyboard(),
+    });
     return;
   }
 
   if (action === "accept") {
     repositories.acceptTerms(user.id);
     const updatedUser = repositories.getUserById(user.id) ?? user;
-    await startWithdrawFlow(ctx, updatedUser);
+    if (!(await enforceClientAccess(ctx, updatedUser))) {
+      return;
+    }
+    await sendMainMenu(ctx, updatedUser);
   }
 });
 
 bot.callbackQuery(/^extract:/, async (ctx) => {
   const user = ensureUser(ctx);
   await ctx.answerCallbackQuery();
-  if (!(await enforceUserAvailability(ctx, user))) {
+  if (!(await enforceClientAccess(ctx, user))) {
     return;
   }
   const parts = ctx.callbackQuery.data.split(":");
@@ -2900,7 +2925,7 @@ bot.callbackQuery(/^deposit:/, async (ctx) => {
   const user = ensureUser(ctx);
   const action = ctx.callbackQuery.data.split(":")[1];
   await ctx.answerCallbackQuery();
-  if (!(await enforceUserAvailability(ctx, user))) {
+  if (!(await enforceClientAccess(ctx, user))) {
     return;
   }
 
@@ -2914,7 +2939,7 @@ bot.callbackQuery(/^withdraw:/, async (ctx) => {
   const user = ensureUser(ctx);
   const [, action, value] = ctx.callbackQuery.data.split(":");
   await ctx.answerCallbackQuery();
-  if (!(await enforceUserAvailability(ctx, user))) {
+  if (!(await enforceClientAccess(ctx, user))) {
     return;
   }
 
@@ -3078,6 +3103,9 @@ bot.callbackQuery(/^info:/, async (ctx) => {
   const user = ensureUser(ctx);
   const action = ctx.callbackQuery.data.split(":")[1];
   await ctx.answerCallbackQuery();
+  if (!(await enforceClientAccess(ctx, user))) {
+    return;
+  }
 
   if (action === "back") {
     ctx.session.flow = { name: "idle" };
@@ -3089,7 +3117,7 @@ bot.callbackQuery(/^affiliate:/, async (ctx) => {
   const user = ensureUser(ctx);
   const action = ctx.callbackQuery.data.split(":")[1];
   await ctx.answerCallbackQuery();
-  if (!(await enforceUserAvailability(ctx, user))) {
+  if (!(await enforceClientAccess(ctx, user))) {
     return;
   }
 
@@ -3122,7 +3150,7 @@ bot.callbackQuery(/^join:/, async (ctx) => {
   await ctx.answerCallbackQuery();
 
   if (action === "check") {
-    if (await enforceRequiredChannel(ctx, user)) {
+    if (await enforceClientAccess(ctx, user)) {
       await sendMainMenu(ctx, user);
     }
   }
@@ -3767,10 +3795,7 @@ bot.on("message:web_app_data", async (ctx) => {
     action = "";
   }
 
-  if (user.role !== "admin" && !(await enforceRequiredChannel(ctx, user))) {
-    return;
-  }
-  if (!(await enforceUserAvailability(ctx, user))) {
+  if (!(await enforceClientAccess(ctx, user))) {
     return;
   }
 
