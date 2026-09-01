@@ -151,17 +151,17 @@ function miniAppHtml() {
   <style>
     :root {
       color-scheme: dark;
-      --bg: #0a1010;
-      --panel: #111817;
-      --panel-2: #182321;
+      --bg: #0c1110;
+      --panel: #121817;
+      --panel-2: #1a2220;
       --panel-3: #edf8f1;
       --text: #f8fffb;
       --ink: #07110d;
       --muted: #91a49b;
       --line: rgba(231, 255, 243, .10);
       --line-strong: rgba(231, 255, 243, .18);
-      --accent: #14c871;
-      --accent-2: #96f0bf;
+      --accent: #21a768;
+      --accent-2: #9ee2bc;
       --cyan: #72e0c4;
       --danger: #ff6470;
       --radius: 8px;
@@ -238,11 +238,11 @@ function miniAppHtml() {
     .hero {
       border: 0;
       border-radius: 0 0 26px 26px;
-      background: linear-gradient(160deg, #16d875 0%, #0fb466 46%, #087f4d 100%);
-      padding: 18px 16px 16px;
+      background: linear-gradient(160deg, #2bb873 0%, #1f8f5c 58%, #176845 100%);
+      padding: 18px 16px 18px;
       position: relative;
       overflow: hidden;
-      box-shadow: 0 18px 54px rgba(9, 119, 70, .25);
+      box-shadow: 0 18px 48px rgba(9, 87, 55, .20);
     }
     .hero::after {
       content: "";
@@ -250,8 +250,8 @@ function miniAppHtml() {
       inset: 0;
       pointer-events: none;
       background:
-        radial-gradient(circle at 88% 12%, rgba(255,255,255,.20), transparent 24%),
-        linear-gradient(115deg, transparent 0 58%, rgba(255,255,255,.08) 58% 100%);
+        radial-gradient(circle at 88% 12%, rgba(255,255,255,.13), transparent 24%),
+        linear-gradient(115deg, transparent 0 58%, rgba(255,255,255,.055) 58% 100%);
       opacity: .9;
     }
     .hero > * { position: relative; z-index: 1; }
@@ -280,24 +280,6 @@ function miniAppHtml() {
       margin: 6px 0 0;
       color: white;
     }
-    .status-strip {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin: 12px 0 8px;
-    }
-    .status-item {
-      min-height: 48px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: rgba(255, 255, 255, .13);
-      padding: 9px;
-      display: grid;
-      align-content: center;
-      gap: 3px;
-    }
-    .status-item b { font-size: 12px; }
-    .hero .status-item b,
     .hero .metric strong { color: white; }
     .hero-grid {
       display: grid;
@@ -312,8 +294,8 @@ function miniAppHtml() {
       padding: 9px 10px;
     }
     .hero .metric {
-      background: rgba(255,255,255,.14);
-      border-color: rgba(255,255,255,.18);
+      background: rgba(255,255,255,.105);
+      border-color: rgba(255,255,255,.16);
     }
     .metric span {
       color: var(--muted);
@@ -326,7 +308,7 @@ function miniAppHtml() {
     .metric strong { display: block; font-size: 16px; margin-top: 4px; letter-spacing: 0; }
     .dashboard {
       display: grid;
-      grid-template-columns: minmax(0, 1.55fr) minmax(260px, .45fr);
+      grid-template-columns: minmax(0, 1.5fr) minmax(260px, .5fr);
       gap: 10px;
       margin-bottom: 10px;
     }
@@ -339,7 +321,7 @@ function miniAppHtml() {
       min-height: 66px;
       border: 1px solid rgba(255,255,255,.08);
       border-radius: 18px;
-      background: #f5fff9;
+      background: #f7fbf8;
       color: var(--ink);
       display: grid;
       grid-template-columns: 34px 1fr;
@@ -440,6 +422,7 @@ function miniAppHtml() {
       cursor: pointer;
     }
     .work-panel { margin-bottom: 10px; }
+    .is-hidden { display: none; }
     .work {
       padding: 12px;
       display: grid;
@@ -527,7 +510,7 @@ function miniAppHtml() {
       .dashboard { grid-template-columns: 1fr; }
       .hero-top { display: grid; }
       .hero-note { justify-items: start; text-align: left; }
-      .hero-grid, .status-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .hero-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
       .quick { grid-template-columns: repeat(2, 1fr); }
       .action { min-height: 72px; }
       .form-grid { grid-template-columns: 1fr; }
@@ -538,7 +521,7 @@ function miniAppHtml() {
     @media (max-width: 430px) {
       .topbar { align-items: flex-start; }
       .topbar > .pill { display: none; }
-      .hero-grid, .status-strip { grid-template-columns: 1fr; }
+      .hero-grid { grid-template-columns: 1fr; }
       .quick { grid-template-columns: 1fr; }
     }
   </style>
@@ -592,7 +575,10 @@ function miniAppHtml() {
 
     function setWorkPanel(html) {
       const panel = document.getElementById("workPanel");
-      if (panel) panel.innerHTML = html;
+      if (panel) {
+        panel.classList.remove("is-hidden");
+        panel.innerHTML = html;
+      }
       panel?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
@@ -608,13 +594,6 @@ function miniAppHtml() {
 
     function render(data) {
       currentData = data;
-      const deposits = data.deposits.length
-        ? data.deposits.map((item) => itemHtml(item, "deposit")).join("")
-        : '<div class="item"><div><div class="item-title">Sem depositos</div><div class="item-sub">Quando entrar PIX, aparece aqui.</div></div></div>';
-      const withdraws = data.withdraws.length
-        ? data.withdraws.map((item) => itemHtml(item, "withdraw")).join("")
-        : '<div class="item"><div><div class="item-title">Sem saques</div><div class="item-sub">Seus envios PIX ficam listados aqui.</div></div></div>';
-      const affiliateLink = data.affiliate.link || ("Use /start ref_" + data.user.telegramId);
 
       root.className = "";
       root.innerHTML =
@@ -627,11 +606,6 @@ function miniAppHtml() {
             '<div class="hero-top">' +
               '<div><p class="balance-label">Saldo disponivel</p><div class="balance">' + money.format(data.balance) + '</div></div>' +
               '<div class="hero-note"><span class="pill"><span class="status-dot"></span>Conta ativa</span><p class="subtitle">PIX, saques e afiliados em tempo real</p></div>' +
-            '</div>' +
-            '<div class="status-strip">' +
-              '<div class="status-item"><span class="muted">Segurança</span><b>WebApp</b></div>' +
-              '<div class="status-item"><span class="muted">Liquidação</span><b>PIX</b></div>' +
-              '<div class="status-item"><span class="muted">Sessão</span><b>' + (data.verified ? "Verificada" : "Preview local") + '</b></div>' +
             '</div>' +
             '<div class="hero-grid">' +
               '<div class="metric"><span class="muted">Taxa</span><strong>' + escapeHtml(data.summary.feeDisplay) + '</strong></div>' +
@@ -646,23 +620,10 @@ function miniAppHtml() {
             '<button class="action" data-action="affiliates"><span class="action-icon">%</span><span><b>Afiliados</b><small>Comissões e link</small></span></button>' +
           '</div>' +
         '</section>' +
-        '<section class="panel work-panel" id="workPanel"><div class="panel-head"><h2>Central de operações</h2><span class="muted">Pronto</span></div><div class="work"><div class="form-grid"><div class="metric"><span>Próxima ação</span><strong>Escolha um atalho</strong></div><div class="metric"><span>Experiência</span><strong>100% web</strong></div></div><p class="subtitle">Deposite, saque, consulte extrato e acompanhe afiliados sem sair desta tela.</p></div></section>' +
-        '<section class="grid">' +
-          '<div class="panel"><div class="panel-head"><h2>Movimentos recentes</h2><span class="pill">PIX</span></div><div class="list">' + deposits + withdraws + '</div></div>' +
-          '<aside class="panel"><div class="panel-head"><h2>Afiliados</h2><span class="pill">' + escapeHtml(data.affiliate.percent) + '%</span></div>' +
-            '<div class="affiliate-box">' +
-              '<div class="form-grid"><div class="metric"><span>Indicados</span><strong>' + escapeHtml(data.affiliate.referralsCount) + '</strong></div><div class="metric"><span>Ativos</span><strong>' + escapeHtml(data.affiliate.activeReferralsCount) + '</strong></div></div>' +
-              '<div class="link" id="affiliateLink">' + escapeHtml(affiliateLink) + '</div>' +
-              '<button class="copy" id="copyLink">Copiar link</button>' +
-            '</div></aside>' +
-        '</section>';
+        '<section class="panel work-panel is-hidden" id="workPanel"></section>';
 
       document.querySelectorAll("[data-action]").forEach((button) => {
         button.addEventListener("click", () => openAction(button.dataset.action));
-      });
-      document.getElementById("copyLink").addEventListener("click", async () => {
-        await navigator.clipboard?.writeText(affiliateLink).catch(() => {});
-        notify("Seu link de afiliado foi copiado.");
       });
     }
 
