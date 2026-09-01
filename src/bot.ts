@@ -11,22 +11,22 @@ type AppContext = Context & SessionFlavor<BotSession>;
 
 const mainKeyboard = () =>
   new InlineKeyboard()
-    .webApp("Mini App", `${appConfig.BASE_URL}/app`)
+    .webApp("💎 Abrir painel web", `${appConfig.BASE_URL}/app`)
     .primary()
     .row()
-    .text("Depositar", "menu:deposit")
+    .text("💳 Depositar", "menu:deposit")
     .success()
-    .text("Sacar", "menu:withdraw")
+    .text("💸 Sacar", "menu:withdraw")
     .danger()
     .row()
-    .text("Extrato", "menu:balance")
-    .text("Taxas", "menu:fees")
+    .text("📊 Extrato", "menu:balance")
+    .text("💹 Taxas", "menu:fees")
     .row()
-    .text("Afiliados", "menu:affiliates")
-    .text("API", "menu:docs")
+    .text("🤝 Afiliados", "menu:affiliates")
+    .text("🔌 API", "menu:docs")
     .row()
-    .text("Comandos", "menu:commands")
-    .text("Suporte", "menu:support");
+    .text("⌨️ Comandos", "menu:commands")
+    .text("🧑‍💻 Suporte", "menu:support");
 
 const adminKeyboard = () =>
   new InlineKeyboard()
@@ -1227,13 +1227,14 @@ async function sendMainMenu(ctx: AppContext, user: UserRecord): Promise<void> {
   await terrorPayService.reconcilePendingDeposits(user.id);
   const summary = terrorPayService.getSummary(user.id);
   const lines = [
-    "<b>⭐ TerrorPay</b>",
-    "<i>Pagamentos · PIX · escala com a menor taxa</i>",
+    "<b>💎 TerrorPay</b>",
+    "<i>Painel PIX rápido, compacto e seguro.</i>",
     "",
-    `🆔 <code>${user.telegramId}</code>`,
-    `💰 Saldo <b>${formatCurrency(summary.balance)}</b>`,
+    `🆔 ID · <code>${user.telegramId}</code>`,
+    `💰 Saldo · <b>${formatCurrency(summary.balance)}</b>`,
+    `💹 Taxa · <b>${summary.feeDisplay}</b>`,
     "",
-    "<i>Escolha uma opção abaixo.</i>",
+    "Abra o painel web para ver tudo em uma tela ou use os atalhos abaixo.",
   ];
 
   await sendManagedReply(ctx, lines.join("\n"), {

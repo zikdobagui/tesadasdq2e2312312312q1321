@@ -179,16 +179,16 @@ function miniAppHtml() {
     }
     button, input { font: inherit; }
     .shell {
-      width: min(1120px, 100%);
+      width: min(1240px, 100%);
       margin: 0 auto;
-      padding: calc(18px + env(safe-area-inset-top)) 16px calc(28px + env(safe-area-inset-bottom));
+      padding: calc(12px + env(safe-area-inset-top)) 12px calc(22px + env(safe-area-inset-bottom));
     }
     .topbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 14px;
-      margin-bottom: 18px;
+      margin-bottom: 10px;
     }
     .brand {
       display: flex;
@@ -244,8 +244,7 @@ function miniAppHtml() {
         linear-gradient(135deg, rgba(40, 225, 138, .13), transparent 32%),
         linear-gradient(160deg, rgba(111, 216, 255, .08), transparent 46%),
         var(--panel);
-      padding: 18px;
-      margin-bottom: 16px;
+      padding: 14px;
       position: relative;
       overflow: hidden;
       box-shadow: 0 22px 70px rgba(0, 0, 0, .22);
@@ -265,7 +264,7 @@ function miniAppHtml() {
       align-items: flex-start;
       justify-content: space-between;
       gap: 14px;
-      margin-bottom: 18px;
+      margin-bottom: 12px;
     }
     .hero-note {
       display: grid;
@@ -273,42 +272,42 @@ function miniAppHtml() {
       justify-items: end;
       text-align: right;
     }
-    .balance-label { color: var(--muted); font-size: 13px; }
+    .balance-label { color: var(--muted); font-size: 12px; }
     .balance {
-      font-size: clamp(34px, 8vw, 54px);
+      font-size: clamp(30px, 6vw, 46px);
       line-height: 1;
       font-weight: 850;
       letter-spacing: 0;
-      margin: 8px 0 0;
+      margin: 6px 0 0;
     }
     .status-strip {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 8px;
-      margin: 18px 0 10px;
+      margin: 12px 0 8px;
     }
     .status-item {
-      min-height: 58px;
+      min-height: 48px;
       border: 1px solid var(--line);
       border-radius: var(--radius);
       background: rgba(9, 12, 13, .42);
-      padding: 10px;
+      padding: 9px;
       display: grid;
       align-content: center;
       gap: 3px;
     }
-    .status-item b { font-size: 13px; }
+    .status-item b { font-size: 12px; }
     .hero-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 8px;
     }
     .metric {
-      min-height: 72px;
+      min-height: 58px;
       border: 1px solid var(--line);
       border-radius: var(--radius);
       background: rgba(24, 31, 34, .82);
-      padding: 11px;
+      padding: 9px 10px;
     }
     .metric span {
       color: var(--muted);
@@ -317,24 +316,30 @@ function miniAppHtml() {
       text-transform: uppercase;
       letter-spacing: .07em;
     }
-    .metric strong { display: block; font-size: 18px; margin-top: 6px; letter-spacing: 0; }
+    .metric strong { display: block; font-size: 16px; margin-top: 4px; letter-spacing: 0; }
+    .dashboard {
+      display: grid;
+      grid-template-columns: minmax(0, 1.55fr) minmax(260px, .45fr);
+      gap: 10px;
+      margin-bottom: 10px;
+    }
     .quick {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin-bottom: 16px;
+      grid-template-columns: 1fr;
+      gap: 8px;
     }
     .action {
-      min-height: 96px;
+      min-height: 66px;
       border: 1px solid var(--line);
       border-radius: var(--radius);
       background: linear-gradient(180deg, rgba(24,31,34,.98), rgba(14,18,20,.98));
       color: var(--text);
       display: grid;
-      align-content: space-between;
+      grid-template-columns: 34px 1fr;
+      align-items: center;
       justify-items: start;
-      gap: 10px;
-      padding: 12px;
+      gap: 9px;
+      padding: 10px;
       cursor: pointer;
       box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
     }
@@ -353,11 +358,13 @@ function miniAppHtml() {
       font-weight: 900;
     }
     .action b { font-size: 14px; }
-    .action small { color: var(--muted); font-size: 11px; line-height: 1.25; }
+    .action b,
+    .action small { display: block; }
+    .action small { color: var(--muted); font-size: 11px; line-height: 1.25; margin-top: 2px; }
     .grid {
       display: grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap: 16px;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 10px;
     }
     .panel {
       border: 1px solid var(--line);
@@ -367,53 +374,53 @@ function miniAppHtml() {
       box-shadow: 0 18px 56px rgba(0, 0, 0, .16);
     }
     .panel-head {
-      min-height: 54px;
+      min-height: 46px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      padding: 14px;
+      padding: 11px 12px;
       border-bottom: 1px solid var(--line);
       background: rgba(255,255,255,.018);
     }
-    .panel-head h2 { font-size: 15px; }
+    .panel-head h2 { font-size: 14px; }
     .list { display: grid; }
     .item {
-      min-height: 64px;
+      min-height: 54px;
       display: grid;
       grid-template-columns: 1fr auto;
       align-items: center;
       gap: 12px;
-      padding: 12px 14px;
+      padding: 9px 12px;
       border-bottom: 1px solid var(--line);
     }
     .item:hover { background: rgba(255, 255, 255, .018); }
     .item:last-child { border-bottom: 0; }
-    .item-title { font-weight: 700; font-size: 14px; }
-    .item-sub { color: var(--muted); font-size: 12px; margin-top: 4px; }
+    .item-title { font-weight: 700; font-size: 13px; }
+    .item-sub { color: var(--muted); font-size: 11px; margin-top: 3px; }
     .status {
       display: inline-flex;
       align-items: center;
       gap: 5px;
       color: var(--muted);
       font-size: 12px;
-      margin-top: 5px;
+      margin-top: 3px;
     }
     .amount { font-weight: 800; white-space: nowrap; }
     .positive { color: var(--accent); }
     .negative { color: var(--danger); }
     .affiliate-box {
-      padding: 14px;
+      padding: 12px;
       display: grid;
-      gap: 10px;
+      gap: 8px;
     }
     .link {
       border: 1px dashed rgba(37, 208, 127, .45);
       border-radius: var(--radius);
       background: rgba(37, 208, 127, .08);
       color: var(--text);
-      padding: 10px;
-      font-size: 12px;
+      padding: 9px;
+      font-size: 11px;
       overflow-wrap: anywhere;
     }
     .copy {
@@ -425,11 +432,11 @@ function miniAppHtml() {
       font-weight: 850;
       cursor: pointer;
     }
-    .work-panel { margin-bottom: 14px; }
+    .work-panel { margin-bottom: 10px; }
     .work {
-      padding: 14px;
+      padding: 12px;
       display: grid;
-      gap: 12px;
+      gap: 10px;
     }
     .form-grid {
       display: grid;
@@ -456,7 +463,7 @@ function miniAppHtml() {
     }
     .input, .select {
       width: 100%;
-      min-height: 44px;
+      min-height: 40px;
       border: 1px solid var(--line);
       border-radius: var(--radius);
       background: #0d1113;
@@ -469,7 +476,7 @@ function miniAppHtml() {
       box-shadow: 0 0 0 3px rgba(40, 225, 138, .08);
     }
     .submit {
-      min-height: 44px;
+      min-height: 40px;
       border: 0;
       border-radius: var(--radius);
       background: var(--accent);
@@ -478,7 +485,7 @@ function miniAppHtml() {
       cursor: pointer;
     }
     .secondary {
-      min-height: 44px;
+      min-height: 40px;
       border: 1px solid var(--line);
       border-radius: var(--radius);
       background: var(--panel-2);
@@ -510,13 +517,22 @@ function miniAppHtml() {
     }
     @media (max-width: 760px) {
       .shell { padding-left: 12px; padding-right: 12px; }
+      .dashboard { grid-template-columns: 1fr; }
       .hero-top { display: grid; }
       .hero-note { justify-items: start; text-align: left; }
-      .hero-grid, .status-strip { grid-template-columns: 1fr; }
+      .hero-grid, .status-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
       .quick { grid-template-columns: repeat(2, 1fr); }
+      .action { min-height: 72px; }
       .form-grid { grid-template-columns: 1fr; }
       .grid { grid-template-columns: 1fr; }
-      .balance { font-size: 40px; }
+      .balance { font-size: 34px; }
+      .metric strong { font-size: 14px; }
+    }
+    @media (max-width: 430px) {
+      .topbar { align-items: flex-start; }
+      .topbar > .pill { display: none; }
+      .hero-grid, .status-strip { grid-template-columns: 1fr; }
+      .quick { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -599,27 +615,29 @@ function miniAppHtml() {
           '<div class="brand"><div class="mark">TP</div><div><p class="eyebrow">Digital banking</p><h1>TerrorPay</h1><p class="subtitle">Conta PIX no Telegram</p></div></div>' +
           '<div class="pill"><span class="status-dot"></span>ID ' + escapeHtml(data.user.telegramId) + '</div>' +
         '</div>' +
-        '<section class="hero">' +
-          '<div class="hero-top">' +
-            '<div><p class="balance-label">Saldo disponivel</p><div class="balance">' + money.format(data.balance) + '</div></div>' +
-            '<div class="hero-note"><span class="pill"><span class="status-dot"></span>Conta operacional</span><p class="subtitle">PIX, saques e afiliados em tempo real</p></div>' +
+        '<section class="dashboard">' +
+          '<div class="hero">' +
+            '<div class="hero-top">' +
+              '<div><p class="balance-label">Saldo disponivel</p><div class="balance">' + money.format(data.balance) + '</div></div>' +
+              '<div class="hero-note"><span class="pill"><span class="status-dot"></span>Conta operacional</span><p class="subtitle">PIX, saques e afiliados em tempo real</p></div>' +
+            '</div>' +
+            '<div class="status-strip">' +
+              '<div class="status-item"><span class="muted">Segurança</span><b>Telegram WebApp</b></div>' +
+              '<div class="status-item"><span class="muted">Liquidação</span><b>PIX integrado</b></div>' +
+              '<div class="status-item"><span class="muted">Sessão</span><b>' + (data.verified ? "Verificada" : "Preview local") + '</b></div>' +
+            '</div>' +
+            '<div class="hero-grid">' +
+              '<div class="metric"><span class="muted">Taxa</span><strong>' + escapeHtml(data.summary.feeDisplay) + '</strong></div>' +
+              '<div class="metric"><span class="muted">Depositos</span><strong>' + money.format(data.totals.deposits) + '</strong></div>' +
+              '<div class="metric"><span class="muted">Afiliados</span><strong>' + money.format(data.affiliate.totalCommission) + '</strong></div>' +
+            '</div>' +
           '</div>' +
-          '<div class="status-strip">' +
-            '<div class="status-item"><span class="muted">Segurança</span><b>Telegram WebApp</b></div>' +
-            '<div class="status-item"><span class="muted">Liquidação</span><b>PIX integrado</b></div>' +
-            '<div class="status-item"><span class="muted">Sessão</span><b>' + (data.verified ? "Verificada" : "Preview local") + '</b></div>' +
+          '<div class="quick">' +
+            '<button class="action" data-action="deposit"><span class="action-icon">+</span><span><b>Depositar</b><small>Gerar QR Code PIX</small></span></button>' +
+            '<button class="action" data-action="withdraw"><span class="action-icon">↗</span><span><b>Sacar</b><small>Enviar para chave PIX</small></span></button>' +
+            '<button class="action" data-action="extract"><span class="action-icon">≡</span><span><b>Extrato</b><small>Últimos movimentos</small></span></button>' +
+            '<button class="action" data-action="affiliates"><span class="action-icon">%</span><span><b>Afiliados</b><small>Comissões e link</small></span></button>' +
           '</div>' +
-          '<div class="hero-grid">' +
-            '<div class="metric"><span class="muted">Taxa</span><strong>' + escapeHtml(data.summary.feeDisplay) + '</strong></div>' +
-            '<div class="metric"><span class="muted">Depositos</span><strong>' + money.format(data.totals.deposits) + '</strong></div>' +
-            '<div class="metric"><span class="muted">Afiliados</span><strong>' + money.format(data.affiliate.totalCommission) + '</strong></div>' +
-          '</div>' +
-        '</section>' +
-        '<section class="quick">' +
-          '<button class="action" data-action="deposit"><span class="action-icon">+</span><b>Depositar</b><small>Gerar QR Code PIX</small></button>' +
-          '<button class="action" data-action="withdraw"><span class="action-icon">↗</span><b>Sacar</b><small>Enviar para chave PIX</small></button>' +
-          '<button class="action" data-action="extract"><span class="action-icon">≡</span><b>Extrato</b><small>Últimos movimentos</small></button>' +
-          '<button class="action" data-action="affiliates"><span class="action-icon">%</span><b>Afiliados</b><small>Comissões e link</small></button>' +
         '</section>' +
         '<section class="panel work-panel" id="workPanel"><div class="panel-head"><h2>Central de operações</h2><span class="muted">Pronto</span></div><div class="work"><div class="form-grid"><div class="metric"><span>Próxima ação</span><strong>Escolha um atalho</strong></div><div class="metric"><span>Experiência</span><strong>100% web</strong></div></div><p class="subtitle">Deposite, saque, consulte extrato e acompanhe afiliados sem sair desta tela.</p></div></section>' +
         '<section class="grid">' +

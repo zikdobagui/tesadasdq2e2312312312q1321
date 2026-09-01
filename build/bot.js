@@ -14,22 +14,22 @@ const logger_1 = require("./logger");
 const repositories_1 = require("./repositories");
 const terrorPayService_1 = require("./services/terrorPayService");
 const mainKeyboard = () => new grammy_1.InlineKeyboard()
-    .webApp("Mini App", `${config_1.appConfig.BASE_URL}/app`)
+    .webApp("💎 Abrir painel web", `${config_1.appConfig.BASE_URL}/app`)
     .primary()
     .row()
-    .text("Depositar", "menu:deposit")
+    .text("💳 Depositar", "menu:deposit")
     .success()
-    .text("Sacar", "menu:withdraw")
+    .text("💸 Sacar", "menu:withdraw")
     .danger()
     .row()
-    .text("Extrato", "menu:balance")
-    .text("Taxas", "menu:fees")
+    .text("📊 Extrato", "menu:balance")
+    .text("💹 Taxas", "menu:fees")
     .row()
-    .text("Afiliados", "menu:affiliates")
-    .text("API", "menu:docs")
+    .text("🤝 Afiliados", "menu:affiliates")
+    .text("🔌 API", "menu:docs")
     .row()
-    .text("Comandos", "menu:commands")
-    .text("Suporte", "menu:support");
+    .text("⌨️ Comandos", "menu:commands")
+    .text("🧑‍💻 Suporte", "menu:support");
 const adminKeyboard = () => new grammy_1.InlineKeyboard()
     .text("👥 Usuários", "admin:users")
     .text("🔎 Buscar usuário", "admin:user_lookup")
@@ -1024,13 +1024,14 @@ async function sendMainMenu(ctx, user) {
     await terrorPayService_1.terrorPayService.reconcilePendingDeposits(user.id);
     const summary = terrorPayService_1.terrorPayService.getSummary(user.id);
     const lines = [
-        "<b>⭐ TerrorPay</b>",
-        "<i>Pagamentos · PIX · escala com a menor taxa</i>",
+        "<b>💎 TerrorPay</b>",
+        "<i>Painel PIX rápido, compacto e seguro.</i>",
         "",
-        `🆔 <code>${user.telegramId}</code>`,
-        `💰 Saldo <b>${(0, format_1.formatCurrency)(summary.balance)}</b>`,
+        `🆔 ID · <code>${user.telegramId}</code>`,
+        `💰 Saldo · <b>${(0, format_1.formatCurrency)(summary.balance)}</b>`,
+        `💹 Taxa · <b>${summary.feeDisplay}</b>`,
         "",
-        "<i>Escolha uma opção abaixo.</i>",
+        "Abra o painel web para ver tudo em uma tela ou use os atalhos abaixo.",
     ];
     await sendManagedReply(ctx, lines.join("\n"), {
         parse_mode: "HTML",
