@@ -46,9 +46,15 @@ function getInitDataFromRequest(req) {
 function resolveMiniAppUser(req) {
     const verifiedUser = verifyTelegramInitData(getInitDataFromRequest(req));
     if (verifiedUser) {
+        const fullName = [verifiedUser.first_name, verifiedUser.last_name]
+            .map((value) => value?.trim())
+            .filter(Boolean)
+            .join(" ");
         return {
             telegramId: verifiedUser.id,
             username: verifiedUser.username ?? null,
+            displayName: fullName || verifiedUser.username || null,
+            photoUrl: verifiedUser.photo_url ?? null,
             verified: true,
         };
     }
@@ -56,7 +62,13 @@ function resolveMiniAppUser(req) {
     const allowLocalPreview = baseUrl.includes("127.0.0.1") || baseUrl.includes("localhost");
     const telegramId = Number(req.query.telegram_id);
     if (allowLocalPreview && Number.isFinite(telegramId)) {
-        return { telegramId, username: null, verified: false };
+        return {
+            telegramId,
+            username: null,
+            displayName: "Cliente TerrorPay",
+            photoUrl: null,
+            verified: false,
+        };
     }
     return null;
 }
@@ -137,6 +149,8 @@ function resolveMiniAppUserRecord(req) {
     }
     return {
         user: repositories_1.repositories.upsertUser(resolved.telegramId, resolved.username, "client"),
+        displayName: resolved.displayName,
+        photoUrl: resolved.photoUrl,
         verified: resolved.verified,
     };
 }
@@ -169,6 +183,14 @@ function miniAppHtml() {
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
     * { box-sizing: border-box; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes softPulse {
+      0%, 100% { transform: scale(1); opacity: .95; }
+      50% { transform: scale(1.04); opacity: 1; }
+    }
     body {
       margin: 0;
       min-height: 100vh;
@@ -197,6 +219,7 @@ function miniAppHtml() {
       align-items: center;
       gap: 10px;
       min-width: 0;
+      animation: fadeUp .42s ease both;
     }
     .mark {
       width: 42px;
@@ -317,6 +340,7 @@ function miniAppHtml() {
       grid-template-columns: minmax(0, 1.5fr) minmax(260px, .5fr);
       gap: 10px;
       margin-bottom: 10px;
+      animation: fadeUp .48s ease both;
     }
     .quick {
       display: grid;
@@ -336,9 +360,14 @@ function miniAppHtml() {
       gap: 9px;
       padding: 10px;
       cursor: pointer;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
       box-shadow: 0 14px 36px rgba(0, 0, 0, .22);
     }
-    .action:hover { border-color: rgba(20, 200, 113, .34); }
+    .action:hover {
+      border-color: rgba(20, 200, 113, .34);
+      transform: translateY(-2px);
+      box-shadow: 0 18px 42px rgba(0, 0, 0, .28);
+    }
     .action:active { transform: translateY(1px); }
     .action-icon {
       width: 34px;
@@ -367,7 +396,39 @@ function miniAppHtml() {
       background: linear-gradient(180deg, rgba(19, 24, 27, .98), rgba(13, 17, 19, .98));
       overflow: hidden;
       box-shadow: 0 18px 54px rgba(0, 0, 0, .24);
+      animation: fadeUp .32s ease both;
     }
+    .profile-card {
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.025));
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(145deg, #f7fff9, #dff4e7);
+      color: #168151;
+      font-weight: 900;
+      overflow: hidden;
+      flex: 0 0 auto;
+      animation: softPulse 4.5s ease-in-out infinite;
+    }
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .profile-card strong { display: block; font-size: 14px; }
+    .profile-card span { color: rgba(255,255,255,.72); font-size: 12px; }
     .panel-head {
       min-height: 46px;
       display: flex;
@@ -598,8 +659,23 @@ function miniAppHtml() {
       '</div>';
     }
 
+    function initials(value) {
+      const cleaned = String(value || "TP").trim();
+      return cleaned
+        .split(/\\s+/)
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((part) => part.charAt(0).toUpperCase())
+        .join("") || "TP";
+    }
+
     function render(data) {
       currentData = data;
+      const profileName = data.user.displayName || data.user.username || "Cliente TerrorPay";
+      const profileHandle = data.user.username ? "@" + data.user.username : "ID " + data.user.telegramId;
+      const avatar = data.user.photoUrl
+        ? '<div class="avatar"><img src="' + escapeHtml(data.user.photoUrl) + '" alt=""></div>'
+        : '<div class="avatar">' + escapeHtml(initials(profileName)) + '</div>';
 
       root.className = "";
       root.innerHTML =
@@ -612,6 +688,10 @@ function miniAppHtml() {
             '<div class="hero-top">' +
               '<div><p class="balance-label">Saldo disponivel</p><div class="balance">' + money.format(data.balance) + '</div></div>' +
               '<div class="hero-note"><span class="pill"><span class="status-dot"></span>Conta ativa</span><p class="subtitle">PIX, saques e afiliados em tempo real</p></div>' +
+            '</div>' +
+            '<div class="profile-card">' +
+              avatar +
+              '<div><strong>' + escapeHtml(profileName) + '</strong><span>' + escapeHtml(profileHandle) + '</span></div>' +
             '</div>' +
             '<div class="hero-grid">' +
               '<div class="metric"><span class="muted">Taxa</span><strong>' + escapeHtml(data.summary.feeDisplay) + '</strong></div>' +
@@ -799,6 +879,8 @@ function registerMiniAppRoutes(app) {
                 id: user.id,
                 telegramId: user.telegramId,
                 username: user.username,
+                displayName: resolved.displayName,
+                photoUrl: resolved.photoUrl,
                 termsAcceptedAt: user.termsAcceptedAt,
             },
             balance: summary.balance,
