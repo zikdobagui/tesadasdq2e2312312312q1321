@@ -28,7 +28,6 @@ const mainKeyboard = () => new grammy_1.InlineKeyboard()
     .text("🤝 Afiliados", "menu:affiliates")
     .text("🔌 API", "menu:docs")
     .row()
-    .text("⌨️ Comandos", "menu:commands")
     .text("🧑‍💻 Suporte", "menu:support");
 const adminKeyboard = () => new grammy_1.InlineKeyboard()
     .text("👥 Clientes", "admin:section:users")
@@ -1094,13 +1093,13 @@ async function sendMainMenu(ctx, user) {
     const summary = terrorPayService_1.terrorPayService.getSummary(user.id);
     const lines = [
         "<b>💎 TerrorPay</b>",
-        "<i>Painel PIX rápido, compacto e seguro.</i>",
+        "<i>Sua conta PIX direto no Telegram.</i>",
         "",
-        `🆔 ID · <code>${user.telegramId}</code>`,
         `💰 Saldo · <b>${(0, format_1.formatCurrency)(summary.balance)}</b>`,
         `💹 Taxa · <b>${summary.feeDisplay}</b>`,
+        `🆔 ID · <code>${user.telegramId}</code>`,
         "",
-        "Abra o painel web para ver tudo em uma tela ou use os atalhos abaixo.",
+        "Abra o painel web para depositar, sacar, acompanhar extrato e gerenciar afiliados em uma experiência mais completa.",
     ];
     await sendManagedReply(ctx, lines.join("\n"), {
         parse_mode: "HTML",
