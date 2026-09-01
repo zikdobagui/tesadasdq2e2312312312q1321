@@ -107,7 +107,8 @@ exports.repositories = {
     },
     getGlobalFeePercent() {
         const row = db_1.db.prepare("SELECT value FROM settings WHERE key = 'globalFeePercent'").get();
-        return row ? Number(row.value) : 0;
+        const value = row ? Number(row.value) : 3;
+        return Number.isFinite(value) ? value : 3;
     },
     getGlobalFeeFixed() {
         const row = db_1.db.prepare("SELECT value FROM settings WHERE key = 'globalFeeFixed'").get();
